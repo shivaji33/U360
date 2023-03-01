@@ -1,13 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'receipt';
+  src: url('./assets/fonts/Merchant\ Copy.ttf') format('truetype');
+  size-adjust: 115%;
+}
+
+:root {
+  --primary-color: #8b005d;
+  --secondary-color: #132728;
+  --app-pink: #bc2c8c;
+  --body-bg: #e4dfd8;
+  --primary-border-radius: 3px
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Roboto', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: #e4dfd8;
+  font-size: 16px;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+.main-header {
+  font-weight: 600;
+  font-size: 1.5rem;
+  line-height: 2rem;
 }

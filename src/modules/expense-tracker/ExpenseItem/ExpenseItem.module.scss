@@ -1,0 +1,11 @@
+.expense-container {
+    background-image: url('../../../assets/wrinkled-paper-texture.jpg');
+    background-position: center;
+    width: 100%;
+    filter: brightness(110%);
+    padding: 1rem;
+    text-transform: uppercase;
+    font-family: 'receipt', monospace;
+    font-size: 1.5rem;
+    line-height: 1.5rem;
+  }

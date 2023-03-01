@@ -1,0 +1,25 @@
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    .nav-bar-menu {
+        li {
+          padding: 0 1rem;
+          cursor: pointer;
+          &.active {
+            position: relative;
+            &::before {
+              content: "";
+              width: 80%;
+              height: 5px;
+              background: #fff;
+              position: absolute;
+              bottom: -5px;
+              left: 10%;
+            }
+          }
+        }
+      }
+      
+}
