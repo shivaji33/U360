@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Expense } from "../ExpenseList/models/expense";
+import { Expense } from "../models/expense";
 import classes from './ExpenseItem.module.scss'
 
 const ExpenseItem: React.FC<{expense: Expense, children?: ReactNode}> = (props) => {

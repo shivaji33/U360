@@ -16,7 +16,9 @@
   --secondary-color: #132728;
   --app-pink: #bc2c8c;
   --body-bg: #e4dfd8;
-  --primary-border-radius: 3px
+  --primary-border-radius: 3px;
+  --input-border-color: #495057;
+  --app-red: red;
 }
 
 body {
@@ -37,4 +39,8 @@ code {
   font-weight: 600;
   font-size: 1.5rem;
   line-height: 2rem;
+}
+
+.required-astrict {
+  color: var(--app-red);
 }

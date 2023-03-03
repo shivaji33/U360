@@ -1,14 +1,21 @@
-import classes from './Input.module.scss';
+import { InputHTMLAttributes, forwardRef } from "react";
 
-const Input: React.FC<{name?: string, id?: string, className?: string, label?: string}> = (props) => {
-    const {name, id, className, label} = props;
-    const styles = `${className}`;
-return (
-    <div className={classes['input-wrapper']}>
-    {label && <label className='text-gray-700' htmlFor={id}>{label}</label>}
-    <input type="text" className={styles} name={name} id={id} />
-    </div>
-);
+interface Props extends InputHTMLAttributes<HTMLInputElement> {
+  label?: string;
+  className?: string;
 }
+
+const Input = forwardRef<HTMLInputElement, Props>(({label, className, ...rest}, ref) => {
+    return (
+      <>
+        {label && (
+          <label className="text-gray-700 mb-2 inline-block" htmlFor={rest.id}>
+            {label}{rest.required ? <span className="required-astrict">*</span>: ''}
+          </label>
+        )}
+        <input autoComplete="off" {...rest} ref={ref} className={'app-input ' + className} />
+      </>
+    );
+  })
 
 export default Input;

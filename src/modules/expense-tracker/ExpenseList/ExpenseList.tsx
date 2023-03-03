@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
-import Button from "../../../components/Buttton/Button";
+import Button from "../../../components/Button/Button";
 import ExpenseItem from "../ExpenseItem/ExpenseItem";
 import classes from "./ExpenseList.module.scss";
-import { Expense } from "./models/expense";
+import { Expense } from "../models/expense";
 
 const DUMMY_DATA: Expense[] = [
   {
@@ -35,7 +35,7 @@ const ExpenseList = () => {
     <div className={classes["expense-list"]}>
       <div className="flex items-center justify-between">
         <h1 className="text-app-pink main-header mb-4">Expense List</h1>
-        <Button type="button" onClick={onCreateExpense} className="mb-4">
+        <Button type="button" onClick={onCreateExpense} className="mb-4 btn-primary">
           Create
         </Button>
       </div>
