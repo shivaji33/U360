@@ -56,6 +56,8 @@ const MultiSelect = forwardRef<HTMLDivElement, Props>(
         )}
         <div className={parentDivClass}>
           <Input
+            name={rest.name}
+            id={rest.id}
             readOnly
             onClick={triggerDropdown}
             value={selectedOption[optionLabel] || ''}
