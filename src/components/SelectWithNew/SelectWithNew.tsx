@@ -1,7 +1,9 @@
-import classes from "./MultiSelect.module.scss";
-import { ChangeEvent, forwardRef, SelectHTMLAttributes, useState } from "react";
+import classes from "./SelectWithNew.module.scss";
+import { ChangeEvent, forwardRef, SelectHTMLAttributes, useImperativeHandle, useRef, useState } from "react";
 import Input from "../Input/Input";
 import Button from "../Button/Button";
+
+
 
 interface Props extends SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
@@ -10,14 +12,22 @@ interface Props extends SelectHTMLAttributes<HTMLSelectElement> {
   optionLabel: string;
   optionValue: string;
   onAddNewItem?: (value: string) => void;
+  onChange?: (value: any) => void
 }
-const MultiSelect = forwardRef<HTMLDivElement, Props>(
-  ({ label, className,options,optionLabel,optionValue, onAddNewItem, ...rest }, ref) => {
+
+export interface SelectWithNewRef {
+  cancelCreateItem: () => void;
+}
+
+const SelectWithNew = forwardRef<SelectWithNewRef, Props>(
+  ({ label, className,options,optionLabel,optionValue, onAddNewItem,onChange, ...rest}, ref) => {
+
     const [isDropdownShow, setIsDropdownShow] = useState(false);
     const [searchInput, setSearchInput] = useState("");
     const [isCreateNewItem, setIsCreateNewItem] = useState(false);
     const parentDivClass = `${classes["multi-select-wrapper"]}`;
     const [selectedOption, setSelectedOption] = useState({});
+    const searchInputRef = useRef<HTMLInputElement>(null);
 
     const triggerDropdown = () => {
       setIsDropdownShow(!isDropdownShow);
@@ -25,15 +35,18 @@ const MultiSelect = forwardRef<HTMLDivElement, Props>(
 
     const backdropHandler = () => {
       setIsDropdownShow(false);
+      setSearchInput('');
+      setIsCreateNewItem(false);
     };
     const inputChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
-      const value = event?.target?.value?.trim();
+      const value = event?.target?.value;
       setSearchInput(value);
     };
     const NO_DATA = "NO_DATA";
     const ADD_NEW_ITEM = "ADD_NEW_ITEM";
     const addNewItem = () => {
       setIsCreateNewItem(true);
+      searchInputRef.current.focus();
     };
     const cancelCreateItem = () => {
       setIsCreateNewItem(false);
@@ -45,7 +58,13 @@ const MultiSelect = forwardRef<HTMLDivElement, Props>(
     const onSelectOption = (option: any) => {
       setSelectedOption(option);
       triggerDropdown();
+      onChange(selectedOption);
     }
+    useImperativeHandle(ref, () => {
+      return {
+        cancelCreateItem
+      }
+    });
     return (
       <>
         {label && (
@@ -72,6 +91,7 @@ const MultiSelect = forwardRef<HTMLDivElement, Props>(
                     className="input-sm"
                     value={searchInput}
                     onChange={inputChangeHandler}
+                    ref={searchInputRef}
                   />
                 )}
                 {isCreateNewItem && (
@@ -110,7 +130,8 @@ const MultiSelect = forwardRef<HTMLDivElement, Props>(
                           ?.includes(searchInput?.toLowerCase())
                       )
                       .map((option) => (
-                        <li className={`${classes["option"]} ${selectedOption && selectedOption[optionValue] === option[optionValue] ? classes['active'] : ''}`} key={option[optionValue]} onClick={onSelectOption.bind(this,option)}>
+                        <li className={`${classes["option"]} ${selectedOption && selectedOption[optionValue] === option[optionValue] ? classes['active'] : ''}`} key={option[optionValue]} 
+                        onClick={onSelectOption.bind(this,option)}>
                           {option[optionLabel]}
                         </li>
                       ))}
@@ -130,4 +151,4 @@ const MultiSelect = forwardRef<HTMLDivElement, Props>(
   }
 );
 
-export default MultiSelect;
+export default SelectWithNew;

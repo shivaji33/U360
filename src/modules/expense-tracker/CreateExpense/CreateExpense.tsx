@@ -1,52 +1,124 @@
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useMemo, useReducer, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../../../components/Button/Button";
 import Input from "../../../components/Input/Input";
-import MultiSelect from "../../../components/MultiSelect/MultiSelect";
+import SelectWithNew, {
+  SelectWithNewRef,
+} from "../../../components/SelectWithNew/SelectWithNew";
 import Select from "../../../components/Select/Select";
 import TextArea from "../../../components/TextArea/TextArea";
-import { ExpenseType, PaymentTypes } from "../expense.constant";
 import classes from "./CreateExpense.module.scss";
 
-import { collection, doc, getDocs, orderBy, query, setDoc} from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDocs,
+  orderBy,
+  query,
+  setDoc,
+} from "firebase/firestore";
 import db from "../../../firebase/firebase.init";
 
 const CreateExpense = () => {
   const navigate = useNavigate();
-  const paymentType = PaymentTypes?.map((et) => ({ id: et, name: et }));
   const [expenseTypes, setExpenseTypes] = useState([]);
-
-  const onAddNewBank = (value: string) => {
-    console.log(value);
+  const [paymentTypes, setPaymentTypes] = useState([]);
+  const [bankList, setBankList] = useState([]);
+  const bankListInputRef = useRef<SelectWithNewRef>(null);
+  
+  const formReducer = (state:ExpenseForm, action: {type: 'update', payload: {name: string, value: any}}) => {
+    switch (action.type) {
+      case 'update':
+        return {
+          ...state,
+          [action.payload.name]: action.payload.value
+        };
+      default:
+        return state;
+    }
   };
+  interface ExpenseForm {
+    expenseDate: string;
+    expenseType: string;
+    expenseDetails: string;
+    expenseAttachment: string;
+    expenseAmount: string;
+    paymentType: string;
+    bankDetails: string;
+    transactionId: string
+  }
+  const formInitValue:ExpenseForm = {
+    expenseDate: '',
+    expenseType: '',
+    expenseDetails: '',
+    expenseAttachment: '',
+    expenseAmount: '',
+    paymentType: '',
+    bankDetails: '',
+    transactionId: ''
+  }
+  const [state, dispatch] = useReducer(formReducer, formInitValue);
+
   const onSubmitForm = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    // TODO
+    console.log(state);
   };
   const fetchExpenseTypes = async () => {
-    const c = collection(db, 'expenseTypes');
-    const q = query(c,orderBy("createdAt", "asc"))
+    const c = collection(db, "expenseTypes");
+    const q = query(c, orderBy("createdAt", "asc"));
     const querySnapshot = await getDocs(q);
-    setExpenseTypes(querySnapshot.docs.map(doc => ({id: doc.id, ...doc.data()})) || []);
-  }
+    setExpenseTypes(
+      querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) || []
+    );
+  };
+  const fetchPaymentTypes = async () => {
+    const c = collection(db, "paymentTypes");
+    const q = query(c, orderBy("createdAt", "asc"));
+    const querySnapshot = await getDocs(q);
+    setPaymentTypes(
+      querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) || []
+    );
+  };
+  const fetchBankList = async () => {
+    const c = collection(db, "bankList");
+    const q = query(c, orderBy("createdAt", "asc"));
+    const querySnapshot = await getDocs(q);
+    setBankList(
+      querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) || []
+    );
+  };
   useMemo(() => {
     fetchExpenseTypes();
+    fetchPaymentTypes();
+    fetchBankList();
   }, []);
-  const onAddDocs = () => {
-    const c = collection(db, 'expenseTypes')
-    ExpenseType.forEach(async et => {
+
+  const onAddDocs = async (value) => {
+    try {
+      const c = collection(db, "bankList");
       await setDoc(doc(c), {
-        name: et,
-        createdAt : new Date().getTime()
-      })
-    }); 
-  }
+        name: value,
+        createdAt: new Date().getTime(),
+      });
+      bankListInputRef.current.cancelCreateItem();
+      fetchBankList();
+    } catch (err) {
+      console.log("Error at Select with item");
+    }
+  };
+
+  const onAddNewBank = (value: string) => {
+    const trimmedValue = value.trim();
+    onAddDocs(trimmedValue);
+  };
+
   return (
     <div className={`m-4 ${classes["ce-wrapper"]}`}>
-      <button onClick={onAddDocs}>Add Docs</button>
       <div className={`main-header ${classes["ce-header"]}`}>
         <i
           onClick={() => {
-            navigate("/expenses");
+            navigate("/home/expenses");
           }}
           className="fa-solid cursor-pointer fa-arrow-left text-3xl"
         ></i>
@@ -56,6 +128,8 @@ const CreateExpense = () => {
         <Input
           type="date"
           name="expenseDate"
+          value={state.expenseDate}
+          onChange={(event) => dispatch({type: 'update', payload: {name: 'expenseDate', value: event.target.value}})}
           id="expenseDate"
           className="mb-4"
           label="Expense Date"
@@ -64,13 +138,18 @@ const CreateExpense = () => {
         <Select
           className="mb-4"
           label="Expense Type"
+          name="expenseType"
+          value={state.expenseType}
+          onChange={(event) => dispatch({type: 'update', payload: {name: 'expenseType', value: event.target.value}})}
           optionLabel="name"
           optionValue="id"
           options={expenseTypes}
           required
         />
         <TextArea
-          name="ExpenseDetails"
+          name="expenseDetails"
+          value={state.expenseDetails}
+          onChange={(event) => dispatch({type: 'update', payload: {name: 'expenseDetails', value: event.target.value}})}
           id="ExpenseDetails"
           className="mb-4"
           label="Expense Details"
@@ -80,6 +159,8 @@ const CreateExpense = () => {
           type="file"
           name="expenseAttachment"
           id="expenseAttachment"
+          value={state.expenseAttachment}
+          onChange={(event) => dispatch({type: 'update', payload: {name: 'expenseAttachment', value: event.target.value}})}
           className="mb-4"
           accept="image/jpg,image/jpeg,image/png,application/pdf"
           multiple
@@ -89,6 +170,8 @@ const CreateExpense = () => {
         <Input
           type="number"
           name="expenseAmount"
+          value={state.expenseAmount}
+          onChange={(event) => dispatch({type: 'update', payload: {name: 'expenseAmount', value: event.target.value}})}
           id="expenseAmount"
           className="mb-4"
           label="Expense Amount (Rupees)"
@@ -98,27 +181,32 @@ const CreateExpense = () => {
         <Select
           className="mb-4"
           label="Payment Type"
+          name="paymentType"
+          value={state.paymentType}
+          onChange={(event) => dispatch({type: 'update', payload: {name: 'paymentType', value: event.target.value}})}
           optionLabel="name"
           optionValue="id"
-          options={paymentType}
+          options={paymentTypes}
           required
         />
-        <MultiSelect
+        <SelectWithNew
+          ref={bankListInputRef}
           className="mb-4"
           required
           label="Bank"
+          name="bankDetails"
+          value={state.bankDetails}
+          onChange={(event) => dispatch({type: 'update', payload: {name: 'bankDetails', value: event}})}
           onAddNewItem={onAddNewBank}
-          options={[
-            { id: 1, value: "Paytm" },
-            { id: 2, value: "SBI" },
-            { id: 3, value: "ICIC" },
-          ]}
-          optionLabel="value"
+          options={bankList}
+          optionLabel="name"
           optionValue="id"
         />
         <Input
           name="transactionId"
           id="transactionId"
+          value={state.transactionId}
+          onChange={(event) => dispatch({type: 'update', payload: {name: 'transactionId', value: event.target.value}})}
           className="mb-4"
           label="Transaction ID"
           required

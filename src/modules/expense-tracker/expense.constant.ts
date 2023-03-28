@@ -21,3 +21,13 @@ export const PaymentTypes: string[] = [
 'Amazon UPI',
 'Whatsapp Pay'
 ];
+
+export const BankList: string[] = [
+'APGVB',   
+'PAYTM',
+'ICICI',
+'HDFC',
+'SBI',
+'Kotak Mahindra',
+'Union Bank'
+];
