@@ -15,7 +15,7 @@ const Select = forwardRef<HTMLSelectElement, Props>(({ label, className, options
       <select {...rest} ref={ref} className={'app-input ' + className}>
         <option key="defaultValue" value={null}>Select</option>
         {options.map((option) => (
-          <option key={option[optionValue]} value={option[optionValue]}>
+          <option key={option[optionValue]} value={JSON.stringify(option)}>
             {option[optionLabel]}
           </option>
         ))}

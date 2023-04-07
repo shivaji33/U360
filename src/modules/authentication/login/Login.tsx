@@ -9,9 +9,9 @@ const Login = () => {
   const navigate = useNavigate();
   const signInWithGoogle = async () => {
     const data = await googleSignIn();
-    if (data) {
-      setLocalStorageItem(AUTH_DATA,data);
-      navigate('/home');
+    if (data.user) {
+      setLocalStorageItem(AUTH_DATA,data.user);
+      navigate('/');
     }
   }
   return (

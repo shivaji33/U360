@@ -58,7 +58,7 @@ const SelectWithNew = forwardRef<SelectWithNewRef, Props>(
     const onSelectOption = (option: any) => {
       setSelectedOption(option);
       triggerDropdown();
-      onChange(selectedOption);
+      onChange(option);
     }
     useImperativeHandle(ref, () => {
       return {

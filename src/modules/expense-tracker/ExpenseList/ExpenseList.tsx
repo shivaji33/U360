@@ -3,34 +3,23 @@ import Button from "../../../components/Button/Button";
 import ExpenseItem from "../ExpenseItem/ExpenseItem";
 import classes from "./ExpenseList.module.scss";
 import { Expense } from "../models/expense";
+import { useEffect, useState } from "react";
+import { fetchData } from "../../../api/api";
+import db from "../../../firebase/firebase.init";
 
-const DUMMY_DATA: Expense[] = [
-  {
-    id: 1,
-    createDate: new Date(),
-    amount: 2500,
-    expenseType: "Grocery",
-    paidFrom: {
-      sourceType: "Phonepe",
-      account: "PAYTM",
-    },
-  },
-  {
-    id: 2,
-    createDate: new Date(),
-    amount: 500,
-    expenseType: "Snacks",
-    paidFrom: {
-      sourceType: "Cred",
-      account: "ICICI",
-    },
-  },
-];
 const ExpenseList = () => {
+  const [expenses, setExpenses] = useState<Expense[]>([]);
     const navigate = useNavigate();
   const onCreateExpense = () => {
     navigate('create-expense');
   };
+  const fetchExpenses = async () => {
+   const data = await fetchData<Expense[]>(db, 'expenseList');
+   setExpenses(data);
+  }
+  useEffect(() => {
+    fetchExpenses();
+  },[]);
   return (
     <div className={classes["expense-list"]}>
       <div className="flex items-center justify-between">
@@ -39,7 +28,7 @@ const ExpenseList = () => {
           Create
         </Button>
       </div>
-      {DUMMY_DATA.map((expense) => (
+      {expenses.map((expense) => (
         <ExpenseItem key={expense.id} expense={expense} />
       ))}
     </div>
