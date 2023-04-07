@@ -31,3 +31,5 @@ export const BankList: string[] = [
 'Kotak Mahindra',
 'Union Bank'
 ];
+
+export const WALLET = 'Wallet';

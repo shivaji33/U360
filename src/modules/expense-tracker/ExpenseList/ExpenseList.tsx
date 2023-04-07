@@ -6,20 +6,25 @@ import { Expense } from "../models/expense";
 import { useEffect, useState } from "react";
 import { fetchData } from "../../../api/api";
 import db from "../../../firebase/firebase.init";
+import { where } from "firebase/firestore";
+import { getUserAuthData } from "../../../localStorage/authData";
+import { EXPENSE_LIST } from "../../../db/db.constant";
 
 const ExpenseList = () => {
   const [expenses, setExpenses] = useState<Expense[]>([]);
     const navigate = useNavigate();
+    const authData = getUserAuthData();
   const onCreateExpense = () => {
     navigate('create-expense');
   };
   const fetchExpenses = async () => {
-   const data = await fetchData<Expense[]>(db, 'expenseList');
+   const data = await fetchData<Expense[]>(db, EXPENSE_LIST,where('createdBy', '==', authData?.uid));
    setExpenses(data);
   }
   useEffect(() => {
     fetchExpenses();
   },[]);
+
   return (
     <div className={classes["expense-list"]}>
       <div className="flex items-center justify-between">
@@ -28,9 +33,10 @@ const ExpenseList = () => {
           Create
         </Button>
       </div>
-      {expenses.map((expense) => (
+      {expenses.length > 0 && expenses.map((expense) => (
         <ExpenseItem key={expense.id} expense={expense} />
       ))}
+      {expenses.length === 0 && <p className="text-center">No Expenses</p>}
     </div>
   );
 };

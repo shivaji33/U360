@@ -1,4 +1,3 @@
-import { async } from "@firebase/util";
 import {
   collection,
   doc,
@@ -7,20 +6,18 @@ import {
   orderBy,
   query,
   serverTimestamp,
-  setDoc,
-  where,
+  setDoc
 } from "firebase/firestore";
-import { getUserAuthData } from "../localStorage/authData";
 
 const fetchData = async <T>(
   db: Firestore,
-  collectionName: string
+  collectionName: string,
+  ...queryCondtions
 ): Promise<T> => {
   return new Promise(async (resolve, reject) => {
     try {
-      const authData = getUserAuthData();
       const c = collection(db, collectionName);
-      const q = query(c,where('uid', '==', authData?.uid), orderBy("createdAt", "asc"));
+      const q = query(c,...queryCondtions, orderBy("createdAt", "asc"));
       const querySnapshot = await getDocs(q);
       const data =
         (querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) || []) as T;

@@ -12,6 +12,9 @@ import db from "../../../firebase/firebase.init";
 import { uploadFileTOFirebaseStorage } from "../../../firebase/storage";
 import { getUserAuthData } from "../../../localStorage/authData";
 import { fetchData, MasterData, postData } from "../../../api/api";
+import { BANK_LIST, EXPENSE_LIST, EXPENSE_TYPES, PAYMENT_TYPES } from "../../../db/db.constant";
+import { WALLET } from "../expense.constant";
+import { where } from "firebase/firestore";
 
 const CreateExpense = () => {
   const navigate = useNavigate();
@@ -67,33 +70,35 @@ const CreateExpense = () => {
       alert('Please upload attchments');
     }
     try {
-      await postData(db,'expenseList',{
-        uid: authData?.uid,
+      const body = {
+        createdBy: authData?.uid,
         expenseDate: state.expenseDate,
         expenseType: JSON.parse(state.expenseType),
         expenseDetails: state.expenseDetails,
         expenseAttachment: attachments,
         expenseAmount: state.expenseAmount,
         paymentType: JSON.parse(state.paymentType),
-        bankDetails: state.bankDetails,
-        transactionId: state.transactionId
-      });
+        bankDetails: state.bankDetails || null,
+        transactionId: state.transactionId || null
+      }
+      await postData(db,EXPENSE_LIST,body);
       navigate('/expenses');
     } catch (err) {
-
+      console.log(err);
     }
   };
   const fetchExpenseTypes = async () => {
-    const res = await fetchData<MasterData[]>(db,'expenseTypes');
+    const res = await fetchData<MasterData[]>(db,EXPENSE_TYPES);
     setExpenseTypes(res);
   };
   const fetchPaymentTypes = async () => {
-    const res = await fetchData<MasterData[]>(db,'paymentTypes');
+    const res = await fetchData<MasterData[]>(db,PAYMENT_TYPES);
     setPaymentTypes(res);
   };
   const fetchBankList = async () => {
-    const res = await fetchData<MasterData[]>(db,'bankList');
-    setBankList(res)
+    const res1 = await fetchData<MasterData[]>(db,BANK_LIST,where('createdBy', '==', null));
+    const res2 = await fetchData<MasterData[]>(db,BANK_LIST,where('createdBy', '==', authData?.uid));
+    setBankList([...res2,...res1])
   };
   useEffect(() => {
     fetchExpenseTypes();
@@ -106,9 +111,10 @@ const CreateExpense = () => {
     const trimmedValue = value.trim();
     try {
       
-      await postData(db,'bankList', {
+      await postData(db,BANK_LIST, {
         name: trimmedValue,
         createdAt: new Date().getTime(),
+        createdBy: authData?.uid
       });
       bankListInputRef.current.cancelCreateItem();
       fetchBankList();
@@ -191,7 +197,7 @@ const CreateExpense = () => {
           options={paymentTypes}
           required
         />
-        <SelectWithNew
+        {state.paymentType && JSON.parse(state.paymentType)?.name !== WALLET && <SelectWithNew
           ref={bankListInputRef}
           className="mb-4"
           required
@@ -202,15 +208,15 @@ const CreateExpense = () => {
           options={bankList}
           optionLabel="name"
           optionValue="id"
-        />
-        <Input
+        />}
+       {state.paymentType && JSON.parse(state.paymentType)?.name !== WALLET && <Input
           name="transactionId"
           id="transactionId"
           onChange={(event) => dispatch({type: 'update', payload: {name: 'transactionId', value: event.target.value}})}
           className="mb-4"
           label="Transaction ID"
           required
-        />
+        />}
         <div className="flex items-center justify-end">
           <Button className="btn-secondary">Cancel</Button>
           <Button className="btn-primary ml-4">Save</Button>

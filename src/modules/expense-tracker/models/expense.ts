@@ -6,9 +6,9 @@ export interface Expense {
   expenseDate: string;
   expenseType: MasterData;
   expenseAmount: string,
-  transactionId: string,
+  transactionId: string | null,
   expenseDetails: string,
-  expenseAttachments: string[],
-  bankDetails: MasterData,
-  paymentType: MasterData
+  expenseAttachment: {rawURL: string,size: number, fileType: string, downloadURL?: string}[],
+  bankDetails: MasterData | null,
+  paymentType: MasterData,
 }
