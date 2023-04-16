@@ -33,18 +33,19 @@ const ExpenseItem: React.FC<{ expense: Expense; children?: ReactNode }> = (
             <td>Amount:</td>
             <td>{props.expense.expenseAmount}</td>
           </tr>
-          <tr>
+          {props.expense.paymentDetails.map(pd => <>
+            <tr>
             <td>Payment Type:</td>
-            <td>{props.expense.paymentType.name}</td>
+            <td>{pd.paymentType.name}</td>
           </tr>
           <tr>
             <td>Bank details:</td>
-            <td>{props.expense.bankDetails?.name || '-'}</td>
+            <td>{pd.bankDetails?.name || '-'}</td>
           </tr>
           <tr>
             <td>Transaction Id:</td>
-            <td>{props.expense.transactionId || '-'}</td>
-          </tr>
+            <td>{pd.transactionId || '-'}</td>
+          </tr></>)}
         </tbody>
       </table>
       <FilePreviewList expense={props.expense} />

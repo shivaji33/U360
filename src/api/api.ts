@@ -17,7 +17,7 @@ const fetchData = async <T>(
   return new Promise(async (resolve, reject) => {
     try {
       const c = collection(db, collectionName);
-      const q = query(c,...queryCondtions, orderBy("createdAt", "asc"));
+      const q = query(c,...queryCondtions, orderBy("createdAt", "desc"));
       const querySnapshot = await getDocs(q);
       const data =
         (querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) || []) as T;

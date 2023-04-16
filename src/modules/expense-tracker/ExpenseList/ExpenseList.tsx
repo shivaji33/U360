@@ -9,16 +9,20 @@ import db from "../../../firebase/firebase.init";
 import { where } from "firebase/firestore";
 import { getUserAuthData } from "../../../localStorage/authData";
 import { EXPENSE_LIST } from "../../../db/db.constant";
+import ExpenseListLoadingShimmer from "../../../components/LoadingShimmers/ExpenseListLoadingShimmer/ExpenseListLoadingShimmer";
 
 const ExpenseList = () => {
   const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
     const navigate = useNavigate();
     const authData = getUserAuthData();
   const onCreateExpense = () => {
     navigate('create-expense');
   };
   const fetchExpenses = async () => {
+    setIsLoading(true);
    const data = await fetchData<Expense[]>(db, EXPENSE_LIST,where('createdBy', '==', authData?.uid));
+   setIsLoading(false);
    setExpenses(data);
   }
   useEffect(() => {
@@ -33,10 +37,11 @@ const ExpenseList = () => {
           Create
         </Button>
       </div>
-      {expenses.length > 0 && expenses.map((expense) => (
+     {isLoading && Array.from({length: 2}, (_, k) => <ExpenseListLoadingShimmer key={k} />)}
+      {!isLoading && expenses.length > 0 && expenses.map((expense) => (
         <ExpenseItem key={expense.id} expense={expense} />
       ))}
-      {expenses.length === 0 && <p className="text-center">No Expenses</p>}
+      {!isLoading && expenses.length === 0 && <p className="text-center">No Expenses</p>}
     </div>
   );
 };
