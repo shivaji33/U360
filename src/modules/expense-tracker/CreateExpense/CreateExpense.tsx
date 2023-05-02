@@ -28,7 +28,8 @@ import {
 import { WALLET } from "../expense.constant";
 import { where } from "firebase/firestore";
 import Spinner from "../../../components/Spinner/Spinner";
-import { type } from "os";
+import { convertToYYYYMMDD } from "../../../utils/date-manupulation";
+import Toster from "../../../components/Toster/Toster";
 
 const CreateExpense = () => {
   const navigate = useNavigate();
@@ -38,9 +39,13 @@ const CreateExpense = () => {
   const [isLoading, setIsLoading] = useState(false);
   const bankListInputRef = useRef<SelectWithNewRef>(null);
   const authData = getUserAuthData();
+  const [isOpenToster, setIsOpenToster] = useState(false);
+  const [tosterMessage, setTosterMessage] = useState('');
+  const [masterDataLoader, setMasterDataLoader] = useState(false);
 
   const paymentDataInit = {
     paymentType: null,
+    paymentAmount: '',
     bankDetails: null,
     transactionId: "",
   };
@@ -95,6 +100,7 @@ const CreateExpense = () => {
     paymentDetails: {
       paymentType: string;
       bankDetails?: null;
+      paymentAmount: number | string
       transactionId?: string;
     }[];
   }
@@ -107,10 +113,16 @@ const CreateExpense = () => {
     paymentDetails: [paymentDataInit],
   };
   const [state, dispatch] = useReducer(formReducer, formInitValue);
-
   const onSubmitForm = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
+
+    if (+state.expenseAmount !== state.paymentDetails.reduce((acc, {paymentAmount}) => +acc + +paymentAmount, 0)) {
+      setIsLoading(false);
+      alert("Total expense amount shoud match with payment amount");
+      return;
+    }
+    
     let attachments = [];
     if (state.expenseAttachment) {
       for (let attachment of state.expenseAttachment) {
@@ -122,7 +134,9 @@ const CreateExpense = () => {
       }
     }
     if (!attachments.length) {
+      setIsLoading(false);
       alert("Please upload attchments");
+      return;
     }
     try {
       const body = {
@@ -138,21 +152,28 @@ const CreateExpense = () => {
         })),
       };
       await postData(db, EXPENSE_LIST, body);
+      setTosterMessage('Expense added succesfully!');
+      setIsOpenToster(true);
       setIsLoading(false);
-      navigate("/expenses");
+      setTimeout(() => navigate("/expenses"),1000);
     } catch (err) {
       console.log(err);
     }
   };
   const fetchExpenseTypes = async () => {
+    setMasterDataLoader(true);
     const res = await fetchData<MasterData[]>(db, EXPENSE_TYPES);
+    setMasterDataLoader(false);
     setExpenseTypes(res);
   };
   const fetchPaymentTypes = async () => {
+    setMasterDataLoader(true);
     const res = await fetchData<MasterData[]>(db, PAYMENT_TYPES);
+    setMasterDataLoader(false);
     setPaymentTypes(res);
   };
   const fetchBankList = async () => {
+    setMasterDataLoader(true);
     const res1 = await fetchData<MasterData[]>(
       db,
       BANK_LIST,
@@ -163,6 +184,7 @@ const CreateExpense = () => {
       BANK_LIST,
       where("createdBy", "==", authData?.uid)
     );
+    setMasterDataLoader(false);
     setBankList([...res2, ...res1]);
   };
   useEffect(() => {
@@ -201,7 +223,8 @@ const CreateExpense = () => {
   }
   return (
     <>
-      {isLoading && <Spinner />}
+      {<Toster isOpen={isOpenToster} message={tosterMessage} setIsOpen={setIsOpenToster} />}
+      {(isLoading || masterDataLoader)&& <Spinner />}
       <div className={`${classes["ce-wrapper"]}`}>
         <div className={`main-header ${classes["ce-header"]}`}>
           <i
@@ -216,6 +239,7 @@ const CreateExpense = () => {
           <Input
             type="date"
             name="expenseDate"
+            max={convertToYYYYMMDD()}
             onChange={(event) =>
               dispatch({
                 type: "update",
@@ -286,11 +310,11 @@ const CreateExpense = () => {
                 <h1 className="text-2xl mb-4">Payment Details - {i + 1}</h1>
                 <div>
                 {i + 1 === state.paymentDetails.length && <i
-                  className="fas fa-plus-square text-2xl"
+                  className="fas fa-plus-square color-pink text-2xl"
                   onClick={onAddMorePaymentDetails}
                 ></i>}
                  {i > 0 && <i
-                  className="fas fa-minus-square ml-3 text-2xl"
+                  className="fas fa-minus-square color-pink ml-3 text-2xl"
                   onClick={onRemovePaymentDetails.bind(this, i)}
                 ></i>}
                 </div>
@@ -313,6 +337,20 @@ const CreateExpense = () => {
                 options={paymentTypes}
                 required
               />
+              <Input
+            type="number"
+            name="paymentAmount"
+            onChange={(event) =>
+              dispatch({
+                type: "update",
+                payload: { name: `paymentDetails.${i}.paymentAmount`, value: event.target.value },
+              })
+            }
+            id="paymentAmount"
+            className="mb-4"
+            label="Amount (Rupees)"
+            required
+          />
               {paymentEle.paymentType &&
                 JSON.parse(paymentEle.paymentType)?.name !== WALLET && (
                   <SelectWithNew

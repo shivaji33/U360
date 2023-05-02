@@ -8,5 +8,5 @@ export interface Expense {
   expenseAmount: string,
   expenseDetails: string,
   expenseAttachment: {rawURL: string,size: number, fileType: string, downloadURL?: string}[],
-  paymentDetails: {paymentType: MasterData; bankDetails?: MasterData | null;transactionId?: string | null;}[]
+  paymentDetails: {paymentType: MasterData;paymentAmount: string, bankDetails?: MasterData | null;transactionId?: string | null;}[]
 }

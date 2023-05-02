@@ -11,7 +11,7 @@ const ExpenseItem: React.FC<{ expense: Expense; children?: ReactNode }> = (
     <div
       className={`${classes["expense-container"]} shadow-sm bg-white p-2 mb-2`}
     >
-      <div className={classes['expense-header']}>
+      <div className={classes["expense-header"]}>
         <h1>U360</h1>
         <h4>{props.expense.id}</h4>
       </div>
@@ -33,21 +33,27 @@ const ExpenseItem: React.FC<{ expense: Expense; children?: ReactNode }> = (
             <td>Amount:</td>
             <td>{props.expense.expenseAmount}</td>
           </tr>
-          {props.expense.paymentDetails.map(pd => <>
-            <tr>
-            <td>Payment Type:</td>
-            <td>{pd.paymentType.name}</td>
-          </tr>
-          <tr>
-            <td>Bank details:</td>
-            <td>{pd.bankDetails?.name || '-'}</td>
-          </tr>
-          <tr>
-            <td>Transaction Id:</td>
-            <td>{pd.transactionId || '-'}</td>
-          </tr></>)}
         </tbody>
       </table>
+    {props.expense.paymentDetails.map((pd, i) => <div key={i} className={classes['dashed-line']}>
+      <div className="text-center">COUNT #{i+1}</div>
+      <div className="flex mt-2">
+        <span className={classes['min-width-150-px']}>Payment Type:</span>
+        <span className="px-2">{pd.paymentType.name}</span>
+      </div>
+      <div className="flex mt-2">
+      <span className={classes['min-width-150-px']}>Payment Amount:</span>
+        <span className="px-2">{pd.paymentAmount}</span>
+      </div>
+     {pd.bankDetails?.name && <div className="flex mt-2">
+      <span className={classes['min-width-150-px']}>Bank Details:</span>
+        <span className="px-2">{pd.bankDetails?.name || '-'}</span>
+      </div>}
+     {pd.transactionId && <div className="flex mt-2">
+      <span className={classes['min-width-150-px']}>Transaction ID:</span>
+        <span className="px-2">{pd.transactionId || '-'}</span>
+      </div>}
+    </div>)}
       <FilePreviewList expense={props.expense} />
     </div>
   );
