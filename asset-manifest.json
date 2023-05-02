@@ -1,18 +1,18 @@
 {
   "files": {
-    "main.css": "/static/css/main.5ec90303.css",
-    "main.js": "/static/js/main.603d672a.js",
-    "static/js/787.04c875e0.chunk.js": "/static/js/787.04c875e0.chunk.js",
-    "static/media/wrinkled-paper-texture.jpg": "/static/media/wrinkled-paper-texture.453f2b0e443cdbdcf8ff.jpg",
-    "static/media/Merchant Copy.ttf": "/static/media/Merchant Copy.b4074b724b1de7a204a0.ttf",
-    "static/media/PDF_file_icon.svg": "/static/media/PDF_file_icon.aeb30c8a13c7ab38ccabb05082cac57b.svg",
-    "index.html": "/index.html",
-    "main.5ec90303.css.map": "/static/css/main.5ec90303.css.map",
-    "main.603d672a.js.map": "/static/js/main.603d672a.js.map",
-    "787.04c875e0.chunk.js.map": "/static/js/787.04c875e0.chunk.js.map"
+    "main.css": "/shivaji33/U360.git/static/css/main.7baa8186.css",
+    "main.js": "/shivaji33/U360.git/static/js/main.8f435638.js",
+    "static/js/787.04c875e0.chunk.js": "/shivaji33/U360.git/static/js/787.04c875e0.chunk.js",
+    "static/media/wrinkled-paper-texture.jpg": "/shivaji33/U360.git/static/media/wrinkled-paper-texture.453f2b0e443cdbdcf8ff.jpg",
+    "static/media/Merchant Copy.ttf": "/shivaji33/U360.git/static/media/Merchant Copy.b4074b724b1de7a204a0.ttf",
+    "static/media/PDF_file_icon.svg": "/shivaji33/U360.git/static/media/PDF_file_icon.aeb30c8a13c7ab38ccabb05082cac57b.svg",
+    "index.html": "/shivaji33/U360.git/index.html",
+    "main.7baa8186.css.map": "/shivaji33/U360.git/static/css/main.7baa8186.css.map",
+    "main.8f435638.js.map": "/shivaji33/U360.git/static/js/main.8f435638.js.map",
+    "787.04c875e0.chunk.js.map": "/shivaji33/U360.git/static/js/787.04c875e0.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.5ec90303.css",
-    "static/js/main.603d672a.js"
+    "static/css/main.7baa8186.css",
+    "static/js/main.8f435638.js"
   ]
 }
