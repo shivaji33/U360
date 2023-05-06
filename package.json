@@ -1,5 +1,6 @@
 {
   "name": "u360",
+  "homepage": "https://github.com/shivaji33/U360",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -21,7 +22,6 @@
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
-  "homepage": "https://github.com/shivaji33/U360.git",
   "scripts": {
     "start": "react-scripts start",
     "predeploy" : "npm run build",
