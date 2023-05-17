@@ -1,5 +1,5 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
+import { FirebaseApp, initializeApp } from "firebase/app";
 
 import {getAuth} from 'firebase/auth';
 
@@ -20,6 +20,9 @@ const firebaseConfig = {
   measurementId: "G-Y31FYEQZ3K"
 };
 
+export const BUCKET_URL = "gs://expense-tracker-9ac2e.appspot.com";
+
+
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
@@ -27,7 +30,12 @@ export const auth = getAuth(app);
 // // Initialize Cloud Firestore and get a reference to the service
 const db = getFirestore(app);
 
+
 export const storage = getStorage();
 
 
 export default db;
+
+function storageBucket(app: FirebaseApp, arg1: string) {
+  throw new Error("Function not implemented.");
+}

@@ -9,14 +9,14 @@ const FilePreviewList: React.FC<{ expense: Expense; children?: ReactNode }> = ({
   const isFilePdf = (contentType: string) => {
     return contentType === "application/pdf";
   };
-  const handleDownload = (fileUrl: string) => {
-    const link = document.createElement("a");
-    link.href = fileUrl;
-    link.target = "_blank";
-    link.download ='test';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const handleDownload = (downloadUrl: string) => {
+    const xhr = new XMLHttpRequest();
+    xhr.responseType = 'blob';
+    xhr.onload = (event) => {
+      const blob = xhr.response;
+    };
+    xhr.open('GET', downloadUrl);
+    xhr.send();
   };
 
   return (

@@ -6,14 +6,15 @@ interface Props extends SelectHTMLAttributes<HTMLSelectElement> {
   optionValue: string;
   optionLabel: string;
   options: any[];
+  isHideSelectOptionFallback?: boolean;
 }
 
-const Select = forwardRef<HTMLSelectElement, Props>(({ label, className, options,optionValue,optionLabel, ...rest }, ref) => {
+const Select = forwardRef<HTMLSelectElement, Props>(({ label, className, options,optionValue,optionLabel,isHideSelectOptionFallback, ...rest }, ref) => {
   return (
     <div>
       {label && <label className="text-gray-700 mb-2 inline-block" htmlFor={rest.id}>{label}{rest.required ? <span className="required-astrict">*</span>: ''}</label>}
       <select {...rest} ref={ref} className={'app-input ' + className}>
-        <option key="defaultValue" value={null}>Select</option>
+        {!isHideSelectOptionFallback && <option key="defaultValue" value={null}>Select</option>}
         {options.map((option) => (
           <option key={option[optionValue]} value={JSON.stringify(option)}>
             {option[optionLabel]}

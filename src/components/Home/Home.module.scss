@@ -34,4 +34,23 @@
       url(https://53.fs1.hubspotusercontent-na1.net/hub/53/hubfs/pen-and-paper-to-do-list.jpg?width=595&height=400&name=pen-and-paper-to-do-list.jpg);
     background-size: cover;
   }
+  li.code-editor-card {
+    background: no-repeat
+    url(../../assets/code-editor-logo.png);
+    background-size: 100% 100%;
+  }
+}
+
+
+@media (min-width: 900px) {
+  .menu-list {
+    display: flex;
+    flex-wrap: wrap;
+    li {
+      width: calc(100% /3 - 1rem);
+      &:not(:first-child) {
+        margin-left: 1rem;
+      }
+    }
+}
 }

@@ -11,6 +11,9 @@ const Home = () => {
         >
           <span className={classes["content"]}>EXPENSES</span>
         </li>
+        <li className={"shadow-sm " + classes["code-editor-card"]}  onClick={() => navigate("/code-editor")}>
+          <span className={classes["content"]}>Code Editor</span>
+        </li>
         <li className={"shadow-sm " + classes["todo-card"]}>
           <span className={classes["content"]}>TODO</span>
         </li>

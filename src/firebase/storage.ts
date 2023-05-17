@@ -1,7 +1,5 @@
 import { getDownloadURL, getMetadata, ref, uploadBytes } from "firebase/storage";
-import { storage } from "./firebase.init";
-
-const BUCKET_URL = "gs://expense-tracker-9ac2e.appspot.com";
+import { BUCKET_URL, storage } from "./firebase.init";
 
 export async function uploadFileTOFirebaseStorage(file: File, uid: string) {
   const formatedDate = getFormatdeDate();
